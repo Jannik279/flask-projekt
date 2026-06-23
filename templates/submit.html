@@ -13,25 +13,25 @@ body {
 }
 
 h1 {
-    font-size: 60px;
-    margin-top: 60px;
+    font-size: 40px;
+    margin-top: 40px;
 }
 
 p {
-    font-size: 28px;
+    font-size: 20px;
 }
 
 .container {
-    margin-top: 60px;
+    margin-top: 40px;
 }
 
 button {
-    width: 300px;
-    height: 180px;
-    font-size: 70px;
-    margin: 25px;
+    width: 220px;
+    height: 140px;
+    font-size: 50px;
+    margin: 18px;
     border: none;
-    border-radius: 25px;
+    border-radius: 18px;
     color: white;
     transition: 0.2s;
 }
@@ -45,14 +45,14 @@ button:active {
 }
 
 .locked {
-    opacity: 0.3;
+    opacity: 0.4;
     pointer-events: none;
 }
 
 .msg {
-    font-size: 40px;
-    color: #555;
-    margin-top: 40px;
+    font-size: 24px;
+    color: #444;
+    margin-top: 25px;
 }
 </style>
 </head>
@@ -80,13 +80,9 @@ function send(answer) {
             answer: answer
         })
     }).then(() => {
-        lock();
+        document.getElementById("buttons").classList.add("locked");
+        document.getElementById("msg").innerText = "Du hast schon geantwortet";
     });
-}
-
-function lock() {
-    document.getElementById("buttons").classList.add("locked");
-    document.getElementById("msg").innerText = "Du hast schon geantwortet";
 }
 </script>
 
