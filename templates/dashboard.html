@@ -14,33 +14,32 @@ body {
 }
 
 h1 {
-    font-size: 45px;
+    font-size: 40px;
     margin-top: 20px;
 }
 
 .grid {
     display: flex;
     justify-content: center;
-    gap: 30px;
-    margin-top: 30px;
+    gap: 25px;
+    margin-top: 25px;
 }
 
 .card {
-    width: 200px;
-    padding: 18px;
-    border-radius: 12px;
-    font-size: 22px;
+    width: 180px;
+    padding: 15px;
+    border-radius: 10px;
+    font-size: 20px;
 }
 
 .a { background: #3498db; }
 .b { background: #2ecc71; }
 .c { background: #e74c3c; }
 
-/* RESET BUTTON */
 .reset-btn {
     margin-top: 25px;
-    padding: 15px 30px;
-    font-size: 22px;
+    padding: 14px 25px;
+    font-size: 20px;
     border: none;
     border-radius: 10px;
     background: #ff4d4d;
@@ -48,22 +47,19 @@ h1 {
     cursor: pointer;
 }
 
-/* REIHENFOLGE */
 .order {
-    margin-top: 35px;
-    font-size: 22px;
-}
-
-.order-item {
-    margin: 8px;
+    margin-top: 30px;
     font-size: 20px;
 }
 
-/* QR */
+.order-item {
+    margin: 5px;
+}
+
 .qr-area {
     display: flex;
     justify-content: center;
-    gap: 80px;
+    gap: 90px;
     margin-top: 40px;
 }
 
@@ -85,7 +81,7 @@ h1 {
     <div class="card c">iPad 3: <span id="a3">-</span></div>
 </div>
 
-<button class="reset-btn" onclick="reset()">🔄 Neue Runde starten</button>
+<button class="reset-btn" onclick="reset()">🔄 Neue Runde</button>
 
 <div class="order">
     <h2>🏁 Reihenfolge</h2>
@@ -120,9 +116,9 @@ async function load() {
 
     let a = data.answers;
 
-    document.getElementById("a1").innerText = a["1"]?.answer || "-";
-    document.getElementById("a2").innerText = a["2"]?.answer || "-";
-    document.getElementById("a3").innerText = a["3"]?.answer || "-";
+    document.getElementById("a1").innerText = a["1"] || "-";
+    document.getElementById("a2").innerText = a["2"] || "-";
+    document.getElementById("a3").innerText = a["3"] || "-";
 
     let html = "";
     data.order.forEach((ipad, i) => {
