@@ -1,90 +1,25 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8">
-<title>iPad {{ ipad }}</title>
-
-<style>
-body {
-    font-family: Arial;
-    background: linear-gradient(135deg, #e3f2fd, #ffffff);
-    text-align: center;
-    margin: 0;
-}
-
-h1 {
-    font-size: 40px;
-    margin-top: 40px;
-}
-
-p {
-    font-size: 20px;
-}
-
-.container {
-    margin-top: 40px;
-}
-
-button {
-    width: 220px;
-    height: 140px;
-    font-size: 50px;
-    margin: 18px;
-    border: none;
-    border-radius: 18px;
-    color: white;
-    transition: 0.2s;
-}
-
-.a { background: #3498db; }
-.b { background: #2ecc71; }
-.c { background: #e74c3c; }
-
-button:active {
-    transform: scale(0.95);
-}
-
-.locked {
-    opacity: 0.4;
-    pointer-events: none;
-}
-
-.msg {
-    font-size: 24px;
-    color: #444;
-    margin-top: 25px;
-}
-</style>
-</head>
-
-<body>
-
-<h1>iPad {{ ipad }}</h1>
-<p>Wähle deine Antwort</p>
-
-<div class="container" id="buttons">
-    <button class="a" onclick="send('A')">A</button>
-    <button class="b" onclick="send('B')">B</button>
-    <button class="c" onclick="send('C')">C</button>
-</div>
-
-<div class="msg" id="msg"></div>
-
 <script>
-function send(answer) {
-    fetch("/save", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-            ipad: "{{ ipad }}",
-            answer: answer
-        })
-    }).then(() => {
-        document.getElementById("buttons").classList.add("locked");
-        document.getElementById("msg").innerText = "Du hast schon geantwortet";
-    });
-}
-</script>
+let currentRound = null;
 
-</body>
-</html>
+async function checkRound() {
+    let res = await fetch("/state");
+    let data = await res.json();
+
+    // erste Runde speichern
+    if (currentRound === null) {
+        currentRound = data.round_id;
+        return;
+    }
+
+    // wenn neue Runde → entsperren
+    if (data.round_id !== currentRound) {
+        currentRound = data.round_id;
+
+        document.getElementById("buttons").classList.remove("locked");
+        document.getElementById("msg").innerText = "";
+    }
+}
+
+// alle 1 Sekunde prüfen
+setInterval(checkRound, 1000);
+</script>
