@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>QR Dashboard</title>
+</head>
+<body>
+
+<h1>Live Antworten</h1>
+
+<div>
+    <h2>iPad 1</h2>
+    <div id="a1">Keine Antwort</div>
+</div>
+
+<div>
+    <h2>iPad 2</h2>
+    <div id="a2">Keine Antwort</div>
+</div>
+
+<div>
+    <h2>iPad 3</h2>
+    <div id="a3">Keine Antwort</div>
+</div>
+
+<script>
+async function update() {
+    try {
+        const response = await fetch("/answers");
+        const data = await response.json();
+
+        document.getElementById("a1").innerText = data["1"];
+        document.getElementById("a2").innerText = data["2"];
+        document.getElementById("a3").innerText = data["3"];
+    } catch(err) {
+        console.log(err);
+    }
+}
+
+update();
+setInterval(update, 1000);
+</script>
+
+</body>
+</html>
