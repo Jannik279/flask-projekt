@@ -7,49 +7,50 @@
 <style>
 body {
     font-family: Arial;
-    background: #111;
+    background: #0f172a;
     color: white;
     text-align: center;
 }
 
 h1 {
+    font-size: 60px;
     margin-top: 30px;
 }
 
 .grid {
     display: flex;
     justify-content: center;
-    gap: 60px;
+    gap: 40px;
     margin-top: 40px;
 }
 
 .card {
-    background: #222;
-    padding: 20px;
-    border-radius: 12px;
-    width: 150px;
+    width: 250px;
+    padding: 25px;
+    border-radius: 15px;
+    font-size: 28px;
 }
 
-button {
-    margin-top: 30px;
-    padding: 12px 20px;
-    font-size: 18px;
-    border: none;
-    border-radius: 8px;
-    background: #e74c3c;
-    color: white;
-    cursor: pointer;
+.a { background: #3498db; }
+.b { background: #2ecc71; }
+.c { background: #e74c3c; }
+
+.order {
+    margin-top: 40px;
+    font-size: 30px;
 }
 
-.qr {
-    margin-top: 50px;
+.qr-area {
     display: flex;
     justify-content: center;
-    gap: 60px;
+    gap: 120px;
+    margin-top: 60px;
 }
 
 .qr-box {
-    text-align: center;
+    padding: 20px;
+    border: 3px solid white;
+    border-radius: 15px;
 }
 </style>
 </head>
@@ -59,30 +60,35 @@ button {
 <h1>📊 Dashboard</h1>
 
 <div class="grid">
-    <div class="card">iPad 1: <span id="a1"></span></div>
-    <div class="card">iPad 2: <span id="a2"></span></div>
-    <div class="card">iPad 3: <span id="a3"></span></div>
+    <div class="card a">iPad 1: <span id="a1">-</span></div>
+    <div class="card b">iPad 2: <span id="a2">-</span></div>
+    <div class="card c">iPad 3: <span id="a3">-</span></div>
+</div>
+
+<div class="order">
+    <h2>🏁 Reihenfolge</h2>
+    <p id="order"></p>
 </div>
 
 <button onclick="reset()">🔄 Neue Runde</button>
 
-<h2 style="margin-top:50px;">QR Codes</h2>
+<h2>QR Codes</h2>
 
-<div class="qr">
+<div class="qr-area">
 
     <div class="qr-box">
         <p>iPad 1</p>
-        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ request.url_root }}submit/1">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data={{ request.url_root }}submit/1">
     </div>
 
     <div class="qr-box">
         <p>iPad 2</p>
-        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ request.url_root }}submit/2">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data={{ request.url_root }}submit/2">
     </div>
 
     <div class="qr-box">
         <p>iPad 3</p>
-        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ request.url_root }}submit/3">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data={{ request.url_root }}submit/3">
     </div>
 
 </div>
@@ -92,9 +98,18 @@ async function load() {
     let res = await fetch("/state");
     let data = await res.json();
 
-    document.getElementById("a1").innerText = data.answers["1"] || "-";
-    document.getElementById("a2").innerText = data.answers["2"] || "-";
-    document.getElementById("a3").innerText = data.answers["3"] || "-";
+    let a = data.answers;
+
+    document.getElementById("a1").innerText = a["1"]?.answer || "-";
+    document.getElementById("a2").innerText = a["2"]?.answer || "-";
+    document.getElementById("a3").innerText = a["3"]?.answer || "-";
+
+    let orderText = "";
+    data.order.forEach((ipad, index) => {
+        orderText += (index+1) + ". iPad " + ipad + " ";
+    });
+
+    document.getElementById("order").innerText = orderText || "-";
 }
 
 async function reset() {
