@@ -1,8 +1,10 @@
 from flask import Flask, render_template, request, jsonify
+import time
 
 app = Flask(__name__)
 
 answers = {"1": None, "2": None, "3": None}
+answer_order = []
 round_active = True
 
 
@@ -20,19 +22,25 @@ def submit(ipad):
 
 @app.route("/save", methods=["POST"])
 def save():
-    global round_active
+    global round_active, answer_order
 
     data = request.get_json()
     ipad = str(data.get("ipad"))
     answer = data.get("answer")
 
     if not round_active:
-        return jsonify({"success": False, "msg": "Round over"})
+        return jsonify({"success": False, "msg": "Runde beendet"})
 
     if answers[ipad] is not None:
-        return jsonify({"success": False, "msg": "Already answered"})
+        return jsonify({"success": False, "msg": "Schon geantwortet"})
 
-    answers[ipad] = answer
+    answers[ipad] = {
+        "answer": answer,
+        "time": time.time()
+    }
+
+    answer_order.append(ipad)
+
     return jsonify({"success": True})
 
 
@@ -40,21 +48,18 @@ def save():
 def state():
     return jsonify({
         "answers": answers,
+        "order": answer_order,
         "round_active": round_active
     })
 
 
 @app.route("/reset", methods=["POST"])
 def reset():
-    global answers, round_active
+    global answers, answer_order, round_active
     answers = {"1": None, "2": None, "3": None}
+    answer_order = []
     round_active = True
     return jsonify({"success": True})
-
-
-@app.route("/health")
-def health():
-    return "OK"
 
 
 if __name__ == "__main__":
