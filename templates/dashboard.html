@@ -1,45 +1,14 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-<meta charset="UTF-8">
-<title>QR Dashboard</title>
-</head>
-<body>
+<h1>Dashboard</h1>
 
-<h1>Live Antworten</h1>
+<h2>Punkte</h2>
+<p>iPad 1: {{ scores["1"] }}</p>
+<p>iPad 2: {{ scores["2"] }}</p>
+<p>iPad 3: {{ scores["3"] }}</p>
 
-<div>
-    <h2>iPad 1</h2>
-    <div id="a1">Keine Antwort</div>
-</div>
+<hr>
 
-<div>
-    <h2>iPad 2</h2>
-    <div id="a2">Keine Antwort</div>
-</div>
+<h2>QR Codes</h2>
 
-<div>
-    <h2>iPad 3</h2>
-    <div id="a3">Keine Antwort</div>
-</div>
-
-<script>
-async function update() {
-    try {
-        const response = await fetch("/answers");
-        const data = await response.json();
-
-        document.getElementById("a1").innerText = data["1"];
-        document.getElementById("a2").innerText = data["2"];
-        document.getElementById("a3").innerText = data["3"];
-    } catch(err) {
-        console.log(err);
-    }
-}
-
-update();
-setInterval(update, 1000);
-</script>
-
-</body>
-</html>
+<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ request.url_root }}submit/1">
+<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ request.url_root }}submit/2">
+<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ request.url_root }}submit/3">
