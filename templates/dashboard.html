@@ -1,14 +1,110 @@
-<h1>Dashboard</h1>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Dashboard</title>
 
-<h2>Punkte</h2>
-<p>iPad 1: {{ scores["1"] }}</p>
-<p>iPad 2: {{ scores["2"] }}</p>
-<p>iPad 3: {{ scores["3"] }}</p>
+<style>
+body {
+    font-family: Arial;
+    background: #111;
+    color: white;
+    text-align: center;
+}
 
-<hr>
+h1 {
+    margin-top: 30px;
+}
 
-<h2>QR Codes</h2>
+.grid {
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    margin-top: 40px;
+}
 
-<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ request.url_root }}submit/1">
-<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ request.url_root }}submit/2">
-<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ request.url_root }}submit/3">
+.card {
+    background: #222;
+    padding: 20px;
+    border-radius: 12px;
+    width: 150px;
+}
+
+button {
+    margin-top: 30px;
+    padding: 12px 20px;
+    font-size: 18px;
+    border: none;
+    border-radius: 8px;
+    background: #e74c3c;
+    color: white;
+    cursor: pointer;
+}
+
+.qr {
+    margin-top: 50px;
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+}
+
+.qr-box {
+    text-align: center;
+}
+</style>
+</head>
+
+<body>
+
+<h1>📊 Dashboard</h1>
+
+<div class="grid">
+    <div class="card">iPad 1: <span id="a1"></span></div>
+    <div class="card">iPad 2: <span id="a2"></span></div>
+    <div class="card">iPad 3: <span id="a3"></span></div>
+</div>
+
+<button onclick="reset()">🔄 Neue Runde</button>
+
+<h2 style="margin-top:50px;">QR Codes</h2>
+
+<div class="qr">
+
+    <div class="qr-box">
+        <p>iPad 1</p>
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ request.url_root }}submit/1">
+    </div>
+
+    <div class="qr-box">
+        <p>iPad 2</p>
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ request.url_root }}submit/2">
+    </div>
+
+    <div class="qr-box">
+        <p>iPad 3</p>
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ request.url_root }}submit/3">
+    </div>
+
+</div>
+
+<script>
+async function load() {
+    let res = await fetch("/state");
+    let data = await res.json();
+
+    document.getElementById("a1").innerText = data.answers["1"] || "-";
+    document.getElementById("a2").innerText = data.answers["2"] || "-";
+    document.getElementById("a3").innerText = data.answers["3"] || "-";
+}
+
+async function reset() {
+    await fetch("/reset", {method: "POST"});
+    load();
+}
+
+setInterval(load, 1000);
+load();
+</script>
+
+</body>
+</html>
