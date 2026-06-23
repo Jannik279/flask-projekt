@@ -1,25 +1,111 @@
-<script>
-let currentRound = null;
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>iPad {{ ipad }}</title>
 
-async function checkRound() {
-    let res = await fetch("/state");
-    let data = await res.json();
-
-    // erste Runde speichern
-    if (currentRound === null) {
-        currentRound = data.round_id;
-        return;
-    }
-
-    // wenn neue Runde → entsperren
-    if (data.round_id !== currentRound) {
-        currentRound = data.round_id;
-
-        document.getElementById("buttons").classList.remove("locked");
-        document.getElementById("msg").innerText = "";
-    }
+<style>
+body {
+    font-family: Arial;
+    background: #f5f7fb;
+    text-align: center;
+    margin: 0;
 }
 
-// alle 1 Sekunde prüfen
-setInterval(checkRound, 1000);
+h1 {
+    font-size: 38px;
+    margin-top: 40px;
+}
+
+p {
+    font-size: 18px;
+}
+
+.container {
+    margin-top: 40px;
+}
+
+button {
+    width: 200px;
+    height: 120px;
+    font-size: 40px;
+    margin: 15px;
+    border: none;
+    border-radius: 15px;
+    color: white;
+}
+
+.a { background: #3498db; }
+.b { background: #2ecc71; }
+.c { background: #e74c3c; }
+
+.locked {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+.msg {
+    font-size: 22px;
+    margin-top: 20px;
+    color: #444;
+}
+</style>
+</head>
+
+<body>
+
+<h1>iPad {{ ipad }}</h1>
+<p>Wähle deine Antwort</p>
+
+<div class="container" id="buttons">
+    <button class="a" onclick="send('A')">A</button>
+    <button class="b" onclick="send('B')">B</button>
+    <button class="c" onclick="send('C')">C</button>
+</div>
+
+<div class="msg" id="msg"></div>
+
+<script>
+let lastRound = null;
+
+function send(answer) {
+    fetch("/save", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            ipad: "{{ ipad }}",
+            answer: answer
+        })
+    }).then(() => {
+        lock();
+    });
+}
+
+function lock() {
+    document.getElementById("buttons").classList.add("locked");
+    document.getElementById("msg").innerText = "Du hast schon geantwortet";
+}
+
+async function check() {
+    try {
+        let res = await fetch("/state");
+        let data = await res.json();
+
+        if (lastRound === null) {
+            lastRound = data.round_id;
+            return;
+        }
+
+        if (data.round_id !== lastRound) {
+            lastRound = data.round_id;
+            document.getElementById("buttons").classList.remove("locked");
+            document.getElementById("msg").innerText = "";
+        }
+    } catch (e) {}
+}
+
+setInterval(check, 1000);
 </script>
+
+</body>
+</html>
